@@ -58,7 +58,7 @@
 	\begin{enumerate}[(a)]
 		\item With \texttt{bvec\_guess = np.array([1., 1.2])}, the \texttt{feasible} function returns:
 		 \texttt{b\_cnstr = array([ True, False], dtype=bool), c\_cnstr = array([ True, False, False], dtype=bool), K\_cnstr = False}. \linebreak
-		 Hence, the non-negativity constraint for consumption is violated for age-1 individuals. Because of that, the first element of \texttt{b\_cnstr} is also \texttt{True}.
+		 Hence, the non-negativity constraint for consumption is violated for one period old individuals. Because of that, the first element of \texttt{b\_cnstr} is also \texttt{True}.
 		 
 		 \item In this case, none of the constraints are violated: \hfill \hfill \linebreak
 		 \texttt{b\_cnstr = array([False, False], dtype=bool), c\_cnstr = array([False, False, False], dtype=bool), K\_cnstr = False}.
