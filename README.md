@@ -76,13 +76,13 @@ Final Exam   |    50  |  25% |
 | Oct.  4 |  T | 3-period-lived model: theory  | Ch. 5       |      |
 | Oct.  6 | Th | 3-period-lived model: computation | Ch. 5   |      |
 | Oct. 11 |  T | *S*-period-lived model        | Ch. 6       | PS 2 |
-| Oct. 13 | Th | Endogenous labor supply       | Ch. 7       | PS 3 |
+| Oct. 13 | Th | Endogenous labor supply       | Ch. 7       |      |
 |         |    |                               | P (2016)    |      |
-| Oct. 18 |  T | Endogenous labor supply       | Ch. 7       |      |
-| Oct. 20 | Th | Bequests: simple              | Ch. 8       | PS 4 |
+| Oct. 18 |  T | Endogenous labor supply       | Ch. 7       | PS 3 |
+| Oct. 20 | Th | Bequests: simple              | Ch. 8       |      |
 |         |    |                               | D (2015)    |      |
 |         |    |                               | DEMPRS (2016) |    |
-| Oct. 25 |  T | Bequests: calibrated from SCF | Ch. 8       |      |
+| Oct. 25 |  T | Bequests: calibrated from SCF | Ch. 8       | PS 4 |
 |         |    |                               | D (2015)    |      |
 | **Oct. 27** | **Th** | **Midterm 1 (Chs. 1-8)** |          | PS 5 |
 | Nov.  1 |  T | Population demographics       | Ch. 9       |      |
