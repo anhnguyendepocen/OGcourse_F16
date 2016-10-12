@@ -123,6 +123,7 @@ def feasible(S, alpha, A, delta, nvec, bvec_guess):
 	return feasible
 
 
+
 print ("#1 Checking feasibility")
 print ("feasibility of [1, 1.2]", feasible(S, alpha, A, delta, nvec, np.array([1.0, 1.2])))
 print ("feasibility of [.06, -.001]", feasible(S, alpha, A, delta, nvec, np.array([0.06, -0.001])))
@@ -169,36 +170,7 @@ def SS_eqns(bvec_guess, *params):
     for i in range(len(S)-1):
         eqns[i] = c[i] ** (-sigma) - beta * (1+rr)* c[i+1] ** (-sigma)
     return eqns
-
-# get SS outputs
-def get_SS(params, bvec_guess, SS_graphs = False):
-    start_time = time.clock()
     
-    S, beta, sigma, nvec, L, A, alpha, delta, SS_tol = params
-    b_ss = opt.fsolve(SS_eqns, bvec_guess, args=(params), xtol = SS_tol)
-    K_ss, Y_ss, r_ss, w_ss, c_ss, C_ss, RCerr_ss, EulErr_ss = SS_vars(b_ss, params)
-    
-    elapsed_time = time.clock() - start_time
-
-    ss_output = {'b_ss': b_ss, 'c_ss': c_ss, 'w_ss': w_ss, 'r_ss': r_ss, 'K_ss': K_ss, 'Y_ss': Y_ss, 'EulErr_ss': EulErr_ss, 'RCerr_ss': RCerr_ss, 'ss_time': elapsed_time}
-
-
-    # ploting graphs
-    if SS_graphs == True:
-        period = [1, 2, 3]
-        plt.plot(period, c_ss, '^-', label = 'beta = '+format(beta)+ \
-			' Consumption')
-        plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
-        plt.plot(period, np.concatenate((np.array([0]), b_ss)), 'o-', label= \
-			'beta =' + format(beta) + ' Capital')
-        plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
-        plt.grid(b=True, which='major', color='0.65', linestyle='-')
-        plt.show()
-
-    return ss_output
-
-print("SS outputs = ", get_SS(params, bvec_guess, SS_graphs = True))
-
 def print_time(seconds):
     '''
     --------------------------------------------------------------------
@@ -243,8 +215,45 @@ def print_time(seconds):
               str(hrs) + ' hrs, ' + str(mins) + ' min, ' +
               str(secs) + ' sec')
 
+# get SS outputs
+def get_SS(params, bvec_guess, SS_graphs = True):
+    start_time = time.clock()
+    
+    S, beta, sigma, nvec, L, A, alpha, delta, SS_tol = params
+    b_ss = opt.fsolve(SS_eqns, bvec_guess, args=(params), xtol = SS_tol)
+    K_ss, Y_ss, r_ss, w_ss, c_ss, C_ss, RCerr_ss, EulErr_ss = SS_vars(b_ss, params)
+    
+    elapsed_time = time.clock() - start_time
+    print("ss_time = ", elapsed_time)
+    
+    ss_output = {'b_ss': b_ss, 'c_ss': c_ss, 'w_ss': w_ss, 'r_ss': r_ss, 'K_ss': K_ss, 'Y_ss': Y_ss, 'EulErr_ss': EulErr_ss, 'RCerr_ss': RCerr_ss, 'ss_time': elapsed_time}
+    
 
+    # ploting graphs
+    if SS_graphs == True:
+        period = [1, 2, 3]
+        cur_path = os.path.split(os.path.abspath(__file__))[0]
+        output_fldr = "images"
+        output_dir = os.path.join(cur_path, output_fldr)
+        if not os.access(output_dir, os.F_OK):
+            os.makedirs(output_dir)
+        plt.plot(period, c_ss, '^-', label = 'beta = '+format(beta)+ \
+			' Consumption')
+        plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+        plt.plot(period, np.concatenate((np.array([0]), b_ss)), 'o-', label= \
+			'beta =' + format(beta) + ' Capital')
+        plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+        plt.grid(b=True, which='major', color='0.65', linestyle='-')
+        output_path = os.path.join(output_dir, "consumption")
+        plt.savefig(output_path)
+        plt.show()
 
+    return ss_output
+    
+params = (S, beta, sigma, nvec, L, A, alpha, delta, SS_tol)
+bvec_guess = np.array([.1,.1])
+SS = get_SS(params, bvec_guess, SS_graphs = True)
+print("SS outputs = ", SS)
 
 
 # TPI
@@ -252,7 +261,8 @@ def print_time(seconds):
 # b_ss
 bvec_guess = np.array([.1, .1])
 params = S, beta, sigma, nvec, L, A, alpha, delta, SS_tol
-b_ss = opt.fsolve(EulErr_ss, bvec_guess, args=(params), xtol = SS_tol)
+
+b_ss = opt.fsolve(SS_eqns, bvec_guess, args=(params), xtol = SS_tol)
 print ("b_ss = ", b_ss)
 
 
@@ -434,6 +444,20 @@ if any(dco) > math.e**(-9):
     Kpath1_prime[t] = xi * Kpath1[t] + (1 - xi) * Kpath0[t]
 print ('iter: ', iter, ', dist: ', d)
 '''
+
+iter = 1
+d = dist(Kpath0, Kpath1)
+xi = 0.2
+min_dist = 1e-9
+
+
+while d > min_dist and iter < 200:
+    iter += 1
+    for t in range(T):
+        Kpath0[t] = xi * Kpath1[t] + (1 - xi) * Kpath0[t]
+        d_new = dist(Kpath0, Kpath1)
+        print ('iter: ', iter, ', dist: ', d)
+
         
 
     
