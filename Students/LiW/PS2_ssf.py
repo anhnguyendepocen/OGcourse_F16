@@ -41,47 +41,22 @@ SS_tol = math.e ** (-13)
 
 
 # K
-def K(bvec):
-	'''
-	Inputs:
-		bvec = np.array([b_2, b_3])
-  
-	Return:
-		K(bvec) = b_2 + b_3
-	'''
-	K = np.sum(bvec)
+def K(bvec_guess):
+	K = np.sum(bvec_guess)
 	return K
 
 # w
-def w(bvec, alpha, A):
-	'''
-	Inputs:
-		alpha, A
-		L = L(nvec)
-		K = K(bvec)
-
-	Returns:
-		w = (1 - alpha) * A * (K / L) ** alpha
-	'''
-	w = (1 - alpha) * A * (K(bvec) / L) ** alpha
+def w(bvec_guess, alpha, A):
+	w = (1 - alpha) * A * (K(bvec_guess) / L) ** alpha
 	return w
 	
 # r
-def r(bvec, nvec, alpha, A, delta):
-	'''
-	Inputs:
-		alpha, A, delta
-		L = L(nvec)
-		K = K(bvec)
-
-	Return:
-		r = alpha * (L / K) ** (1 - alpha) - delta
-	'''
-	r = alpha * (L / K(bvec)) ** (1 - alpha) - delta
+def r(bvec_guess, nvec, alpha, A, delta):
+	r = alpha * (L / K(bvec_guess)) ** (1 - alpha) - delta
 	return r
  
 # set up c_s = [c_1, c_2, c_3]
-def  c_s(bvec, alpha, A, delta):
+def  c_s(bvec_guess, alpha, A, delta):
 	'''
 	Inputs:c
 		params = alpha, A, , delta
@@ -95,40 +70,30 @@ def  c_s(bvec, alpha, A, delta):
 	'''
  
 	nvec = np.array([1, 1, .2]) 
-	w0 = w(bvec, alpha, A)
-	r0 = r(bvec, nvec, alpha, A, delta)
-	b2 = bvec[0]
-	b3 = bvec[1]
+	w0 = w(bvec_guess, alpha, A)
+	r0 = r(bvec_guess, nvec, alpha, A, delta)
+	b2 = bvec_guess[0]
+	b3 = bvec_guess[1]
 	
 	cvec = np.zeros(3)
 	for i in range(3):
-         cvec[i] = w0*nvec[i] + (1+r0)*b2 - b3
+         cvec[i] = w0 * nvec[i] + (1+r0) * b2 - b3
 
 	return cvec
 
 # Y
-def  Y(bvec, alpha, A):
-	'''
-	Inputs:
-		A, alpha
-		K = K(bvec)
-		L = L(bvec)
-
-	Return:
-		Y = A * K ** alpha * L ** (1 - alpha)
-	'''
-	Y = A * K(bvec) ** alpha * L ** (1 - alpha)
+def  Y(bvec_guess, alpha, A):
+	Y = A * K(bvec_guess) ** alpha * L ** (1 - alpha)
 	return Y
 
 # feasibility
-def feasible(S, alpha, A, delta, nvec, bvec):
-	
+def feasible(S, alpha, A, delta, nvec, bvec_guess):
+    
 	# compute K and c_s
-
-	c = c_s(bvec, alpha, A, delta)
+	c = c_s(bvec_guess, alpha, A, delta)
 
 	# check K
-	K_cnstr = K(bvec) <= 0
+	K_cnstr = K(bvec_guess) <= 0
 	if K_cnstr == True:
 		feasible = False
 
@@ -138,6 +103,7 @@ def feasible(S, alpha, A, delta, nvec, bvec):
 	# check bvec
 	# Set b_cnstr to all False
 	b_cnstr = [False, False]
+
 	# if c_1 <= 0, c_cnstr == Ture, b_cnstr[0] == True
 	if c_cnstr[0] == True:
 		b_cnstr[0] == True
@@ -156,82 +122,82 @@ def feasible(S, alpha, A, delta, nvec, bvec):
 	feasible = (b_cnstr, c_cnstr, K_cnstr)
 	return feasible
 
+
 print ("#1 Checking feasibility")
 print ("feasibility of [1, 1.2]", feasible(S, alpha, A, delta, nvec, np.array([1.0, 1.2])))
 print ("feasibility of [.06, -.001]", feasible(S, alpha, A, delta, nvec, np.array([0.06, -0.001])))
 print ("feasibility of [.1, .1]", feasible(S, alpha, A, delta, nvec, np.array([0.1, 0.1])))
+
  
- 
 	
-# Euler Error Function
-	
-def EulErr_ss(bvec, *arg):
-	'''
-	sigma
-	beta
-	K = K(bvec)
-	L = L(nvec)
-	w = w(bvec, alpha, A)
-	r = r(bvec, nvec, alpha, A, delta)
-	'''
-	arg = alpha, A, delta, sigma
-	w0 = w(bvec, alpha, A)
-	r0 = r(bvec, nvec, alpha, A, delta)
-	b_2 = bvec[0]
-	b_3 = bvec[1]
+# Steady State
 
-	#marginal utilities
-	mu = np.zeros(3)
-	mu[0] = (w0 - b_2) ** (-sigma)
-	mu[1] = (w0 + (1 + r0) * b_2 - b_3) ** (-sigma)
-	mu[2] = (nvec[2] * w0 + (1 + r0) * b_3) ** (-sigma)
+# SS equations
 
-	# Euler Errors
-	EulErr_ss = np.zeros(2)
-	EulErr_ss[0] = beta * (1+r0) * mu[1] ** (-sigma) -  mu[0] ** (-sigma)
-	EulErr_ss[1] = beta * (1+r0) * mu[2] ** (-sigma) -  mu[1] ** (-sigma)
-	
-	return EulErr_ss
+# get SS variables for equations
+def SS_vars(bvec_guess, params):
+    
+    # set up inputs
+    S, beta, sigma, nvec, L, A, alpha, delta, SS_tol = params
+    KK = K(bvec_guess)
+    YY = Y(bvec_guess, alpha, A)
+    rr = r(bvec_guess, nvec, alpha, A, delta)
+    ww = w(bvec_guess, alpha, A)
+    b = np.append([0], bvec_guess)
+    b = np.append(b, [0])
+    c = np.zeros(len(S))
 
-def get_SS(beta, sigma, L, A, alpha, bvec_guess, nvec, SS_graphs):
-	start_time = time.clock()
-     
-	# Values at steady states
-	# savings
-	b_ss = opt.fsolve(EulErr_ss, bvec_guess, args=(beta, sigma, L, A, alpha), xtol = SS_tol)
-	# aggregate capital
-	K_ss = K(b_ss)
-	# interest rate
-	r_ss = r(bvec_guess, nvec, alpha, A, delta)
-	# real wages
-	w_ss = w(bvec_guess, alpha, A)
-	# consumption
-	c_ss = c_s(bvec_guess, alpha, A, delta)
-	# production
-	Y_ss = Y(bvec_guess, alpha, A)
-	# resource constraint error
-	RCerr_ss = Y_ss - c_ss.sum() - delta * K_ss
+    # get RCerr
+    for i in range(len(c)):
+        c[i] = ww * nvec[i] + (1+rr) * b[i] - b[i+1]
+    C = sum(c)
+    RCerr = YY - C - delta * KK
 
-	elapsed_time = time.clock() - start_time
+    # get Euler Errors
+    EulErr = np.ones(len(S)-1)
+    for i in range(len(S)-1):
+        EulErr[i] = ( beta * (1+rr) * c[i+1] ** (-sigma) ) / (c[i] ** (-sigma) ) - 1   
 
- # ploting graphs
-	if SS_graphs == True:
-		period = [1, 2, 3]
-		plt.plot(period, c_ss, '^-', label = 'beta = '+format(beta)+ \
+    return KK, YY, rr, ww, c, C, RCerr, EulErr
+
+# set up equations
+def SS_eqns(bvec_guess, *params):
+    S, beta, sigma, nvec, L, A, alpha, delta, SS_tol = params
+    KK, YY, rr, ww, c, C, RCerr, EulErr = SS_vars(bvec_guess, params)
+    
+    eqns = np.zeros(len(S)-1)
+    for i in range(len(S)-1):
+        eqns[i] = c[i] ** (-sigma) - beta * (1+rr)* c[i+1] ** (-sigma)
+    return eqns
+
+# get SS outputs
+def get_SS(params, bvec_guess, SS_graphs = False):
+    start_time = time.clock()
+    
+    S, beta, sigma, nvec, L, A, alpha, delta, SS_tol = params
+    b_ss = opt.fsolve(SS_eqns, bvec_guess, args=(params), xtol = SS_tol)
+    K_ss, Y_ss, r_ss, w_ss, c_ss, C_ss, RCerr_ss, EulErr_ss = SS_vars(b_ss, params)
+    
+    elapsed_time = time.clock() - start_time
+
+    ss_output = {'b_ss': b_ss, 'c_ss': c_ss, 'w_ss': w_ss, 'r_ss': r_ss, 'K_ss': K_ss, 'Y_ss': Y_ss, 'EulErr_ss': EulErr_ss, 'RCerr_ss': RCerr_ss, 'ss_time': elapsed_time}
+
+
+    # ploting graphs
+    if SS_graphs == True:
+        period = [1, 2, 3]
+        plt.plot(period, c_ss, '^-', label = 'beta = '+format(beta)+ \
 			' Consumption')
-		plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
-		plt.plot(period, np.concatenate((np.array([0]), b_ss)), 'o-', label= \
+        plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+        plt.plot(period, np.concatenate((np.array([0]), b_ss)), 'o-', label= \
 			'beta =' + format(beta) + ' Capital')
-		plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
-		plt.grid(b=True, which='major', color='0.65', linestyle='-')
-		plt.show()
+        plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+        plt.grid(b=True, which='major', color='0.65', linestyle='-')
+        plt.show()
 
-	ss_output = {'b_ss': b_ss, 'c_ss': c_ss, 'w_ss': w_ss, 'r_ss': r_ss, 'K_ss': K_ss, 'Y_ss': Y_ss, 'EulErr_ss': EulErr_ss(b_ss, ), 'RCerr_ss': RCerr_ss, 'ss_time': elapsed_time}
-	return ss_output
+    return ss_output
 
-bvec_guess = np.array([.1, .1])
-print("#2 steady-state outputs")
-print("ss_output = ", get_SS(beta, sigma, L, A, alpha, bvec_guess, nvec, "True"))
+print("SS outputs = ", get_SS(params, bvec_guess, SS_graphs = True))
 
 def print_time(seconds):
     '''
@@ -284,11 +250,13 @@ def print_time(seconds):
 # TPI
 
 # b_ss
-b_ss = opt.fsolve(EulErr_ss, bvec_guess, args=(beta, sigma, L, A, alpha), xtol = SS_tol)
+bvec_guess = np.array([.1, .1])
+params = S, beta, sigma, nvec, L, A, alpha, delta, SS_tol
+b_ss = opt.fsolve(EulErr_ss, bvec_guess, args=(params), xtol = SS_tol)
 print ("b_ss = ", b_ss)
 
 
-SS = get_SS(beta, sigma, L, A, alpha, bvec_guess, nvec, "False")
+SS = get_SS(params, bvec_guess, "False")
 nvec = np.array([1 , 1, .2])
 T = 30
 A = 1
