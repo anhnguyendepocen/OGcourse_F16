@@ -456,7 +456,7 @@ while d > min_dist and iter < 200:
     for t in range(T):
         Kpath0[t] = xi * Kpath1[t] + (1 - xi) * Kpath0[t]
         d_new = dist(Kpath0, Kpath1)
-        print ('iter: ', iter, ', dist: ', d)
+    print ('iter: ', iter, ', dist: ', d)
 
         
 
