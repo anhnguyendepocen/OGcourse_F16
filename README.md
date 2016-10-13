@@ -78,6 +78,7 @@ Final Exam   |    50  |  25% |
 | Oct. 11 |  T | *S*-period-lived model        | Ch. 6       | PS 2 |
 | Oct. 13 | Th | Endogenous labor supply       | Ch. 7       |      |
 |         |    |                               | P (2016)    |      |
+|         |    |                               | E&P (2016)  |      |
 | Oct. 18 |  T | Endogenous labor supply       | Ch. 7       | PS 3 |
 | Oct. 20 | Th | Bequests: simple              | Ch. 8       |      |
 |         |    |                               | D (2015)    |      |
@@ -106,6 +107,7 @@ Final Exam   |    50  |  25% |
 * DeBacker, Jason, Richard W. Evans, Evan Magnusson, Kerk L. Phillips, Shanthi Ramnath, and Isaac Swift, "[The Distributional Effects of Redistributional Tax Policy](https://sites.google.com/site/rickecon/WealthTax.pdf)," under review at *Quantitative Economics* (August 2016).
 * DeBacker, Jason, Richard W. Evans, and Kerk L. Phillips, "[Integrating Microsimulation Tax Functions into a DGE Macroeconomic Model: A Canonical Example](https://sites.google.com/site/rickecon/DEP_10pct.pdf)," mimeo (August 2016).
 * Evans, Richard W., *Overlapping Generations Models for Policy Analysis: Theory and Computation*, unpublished draft (2016).
+* Evans, Richard W. and Kerk L. Phillips, "[Advantages of an Ellipse when Modeling Leisure Utility](https://sites.google.com/site/rickecon/Elliptical.pdf)," *Computational Economics*, (forthcoming, 2016).
 * Nishiyama, Shinichi, "Fiscal Policy Effects in a Heterogeneous-agent OLG economy with an Aging Population," *Journal of Economic Dynamics & Control*, 61, pp. 114-132 (December 2015).
 * Nishiyama, Shinichi and Kent Smetters, "Does Social Security Privatization Produce Efficiency Gains?," *Quarterly Journal of Economics*, 122:4, pp. 1677-1719 (November 2007).
 * Peterman, William, "Reconciling Micro and Macro Estimates of the Frisch Labor Supply Elasticity," *Economic Inquiry*, 54:1, pp. 100-120 (January 2016).
