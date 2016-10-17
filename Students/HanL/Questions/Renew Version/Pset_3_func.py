@@ -57,11 +57,9 @@ def get_w(bvec, params):
             
     Output: the wage of that period- float
     '''
-    alpha = params[3]
-    A = params[2]
-    nvec = params[1]
-    L = sum(nvec)
-    K = sum(bvec)
+    S,  nvec, A, alpha, delta, beta, sigma, L, SS_tol = params
+    L = get_L(nvec)
+    K = get_K(bvec)
     return (1 - alpha) * A * (K / L) **alpha
 
     
@@ -74,12 +72,9 @@ def get_r(bvec, params):
     
     Output: bvec 
     '''
-    alpha = params[3]
-    A = params[2]
-    delta = params[4]
-    nvec = params[1]
-    L = sum(nvec)
-    K = sum(bvec)
+    S,  nvec, A, alpha, delta, beta, sigma, L, SS_tol = params
+    L = get_L(nvec)
+    K = get_K(bvec)
     return alpha * A * (L / K)**(1 - alpha) - delta
 
     
@@ -105,8 +100,7 @@ def get_cvec(bvec, w, r, params):
         Consumption for each period. [c1, c2, c3]
         
     '''
-    nvec = params[1]
-    S = params[0]
+    S,  nvec, A, alpha, delta, beta, sigma, L, SS_tol = params
     if (type(w) == np.float64):
         r = np.array([0,] + [r,] * (len(S) - 1))
         w = np.array([w,] * len(S))
@@ -131,9 +125,7 @@ def get_Y(bvec, params):
     Output:
             Single float point value for steady state production
     '''
-    alpha = params[3]
-    nvec = params[1]
-    A = params[2]
+    S,  nvec, A, alpha, delta, beta, sigma, L, SS_tol = params
     K = get_K(bvec)
     L = get_L(nvec)
     return A * K**(alpha) * L**(1-alpha)
@@ -149,7 +141,7 @@ def get_varss(bvec_guess, params):
 
 
 #build up the feasilbe function
-def feasible(f_params, bvec_guess):
+def feasible(params, bvec_guess):
     '''
     Given parameter and a saving vector guess, output an array indicating 
     whether certain variable is valid
@@ -166,11 +158,11 @@ def feasible(f_params, bvec_guess):
             [b, c, K]
     '''
     #get K and consumption
-    S = f_params[0]
+    S,  nvec, A, alpha, delta, beta, sigma, L, SS_tol = params
     K = get_K(bvec_guess)
-    w = get_w(bvec_guess, f_params)
-    r= get_r(bvec_guess, f_params)
-    consumption = get_cvec(bvec_guess, w, r, f_params)
+    w = get_w(bvec_guess, params)
+    r= get_r(bvec_guess, params)
+    consumption = get_cvec(bvec_guess, w, r, params)
     
     #create boolean for consumption and capital
     c_b = [consumption[i] <= 0 for i in range(len(consumption))]
@@ -227,13 +219,14 @@ def EulErrFunc(bvec, *args):
         params = args[2]
         S,  nvec, A, alpha, delta, beta, sigma, L, SS_tol = params
         cvec = get_cvec(bvec, w, r, params)
+    # for the Non-SS incomplete agent, where the first period saving is passed
+    # in as an input
     else:
         w = args[0]
         r = args[1]
         w = np.append([0], w)
-#        r = np.append([0], r)
         params = args[2]
-        b_bar = args[3]
+        b_bar = args[3]         #b_bar is the given first period saving
         S,  nvec, A, alpha, delta, beta, sigma, L, SS_tol = params
         cvec = get_cvec(np.append([b_bar], bvec), w, r, params)
 
