@@ -16,7 +16,6 @@ beta = 0.96 ** (80/S)
 sigma = 3
 SS_tol = 1e-13
 
-
 # nvec
 nvec = np.zeros(S)
 nvec[:int(round(2 * S / 3))] = 1
@@ -24,6 +23,9 @@ nvec[int(round(2 * S / 3)):] = 0.2
 
 # L
 L = nvec.sum()
+
+params = (S, beta, sigma, L, A, alpha, delta)
+
 # K
 def K(bvec_guess):
     K = np.sum(bvec_guess)
@@ -39,20 +41,9 @@ def r(bvec_guess, alpha, A, delta):
     r = alpha * (L / K(bvec_guess)) ** (1 - alpha) - delta
     return r
  
-# set up c_s = [c_1, c_2, c_3]
+# set up c_s
 def  c_s(S, alpha, A, delta, nvec, bvec_guess):
-    '''
-    Inputs:c
-        params = alpha, A, , delta
-        w = w(bvec, params)
-        r = r(bvec, params)
-        L = L(nvec)
-        K = K(bvec)
-
-    Return:
-        c_s  = np.array([c_1, c_2, c_3])
-    '''
- 
+   
     w0 = w(bvec_guess, alpha, A)
     r0 = r(bvec_guess, alpha, A, delta)
     bt = np.append([0], bvec_guess)
@@ -70,10 +61,9 @@ def  Y(bvec_guess, alpha, A):
 # feasibility
 def feasible(S, alpha, A, delta, bvec_guess):
     
-    # compute K and c_s
+ 
     c = c_s(S, alpha, A, delta, nvec, bvec_guess)
 
-    # check K
     K_cnstr = K(bvec_guess) <= 0
     if K_cnstr == True:
         feasible = False
@@ -93,55 +83,23 @@ def feasible(S, alpha, A, delta, bvec_guess):
             b_cnstr[S-1] == True
             
         else: 
-        	if s < S-2 and c_cnstr[s] == True:
+        	if 0 < s < S-2 and c_cnstr[s] == True:
 	        	b_cnstr[s] = True
 	        	b_cnstr[s+1] = True
-
+	
     feasible = (b_cnstr, c_cnstr, K_cnstr)
     return feasible
 
 # Q2
 
 def get_EulErr(beta, sigma, alpha, A, delta, bvec_guess):
-    '''
-    Generates vector of dynamic Euler errors that characterize the
-    optimal lifetime savings
-    Inputs:
-        params      = length 4 tuple, (beta, sigma, chi_b, bsp1)
-        beta        = scalar in [0,1), discount factor
-        sigma       = scalar > 0, coefficient of relative risk aversion
-        b1          = scalar, last period savings (intentional bequests)
-        r           = scalar > 0 or [p-1,] vector, interest rate or time
-                      path of interest rates with the last value being 0
-        cvec        = [p,] vector, distribution of consumption by age
-                      c_p
-        c_constr    = [p,] boolean vector, =True if c<=0 for given bvec
-        bsp1_constr = [S,] boolean vector, last element =True if
-                      b_{S+1}<=0
-       
-    Functions called: None
-    Objects in function:
-        mu_c         = [p-1,] vector, marginal utility of current
-                       consumption
-        mu_cp1       = [p-1,] vector, marginal utility of next period
-                       consumption
-        b_errors_dyn = [p-1,] vector, dynamic Euler errors
-        b_errors_sta = scalar, static Euler error on intentional
-                       bequests
-        b_errors     = [p,] vector, Euler errors with errors = 0
-                       characterizing optimal savings bvec
-    Returns: b_errors
-    '''
     
-
     w0 = w(bvec_guess, alpha, A)
     r0 = r(bvec_guess, alpha, A, delta)
 
     c = c_s(S, alpha, A, delta, nvec, bvec_guess)
     c_cnstr = c <= 0
     c[c_cnstr] = 9999. 
-    # print (c)
-
 
     mu_ct = c[:-1] ** (-sigma) # marginal utility at time t
     mu_ct1 = c[1:] ** (-sigma) # expected marginal utility at time t+1
@@ -149,14 +107,13 @@ def get_EulErr(beta, sigma, alpha, A, delta, bvec_guess):
 
     mu_ct[c_cnstr[0:-1]] = -9999
     mu_ct1[c_cnstr[1:]] = 9999
-    # print(mu_ct)
 
     EulErr_ss = (beta * (1 + r0) * mu_ct1) - mu_ct
     return EulErr_ss
 
 def SS_eqns(bvec_guess, *params):
-    S, beta, sigma, L, A, alpha, delta, SS_tol = params
-    
+
+    params = (S, beta, sigma, L, A, alpha, delta, SS_tol)
     KK = K(bvec_guess)
     YY = Y(bvec_guess, alpha, A)
     rr = r(bvec_guess, alpha, A, delta)
@@ -173,9 +130,8 @@ def SS_eqns(bvec_guess, *params):
 
 def get_SS(params, bvec_guess, nvec, SS_graphs = True):
     start_time = time.clock()
-    # set up inputs
 
-    S, beta, sigma, L, A, alpha, delta, SS_tol = params
+    params = (S, beta, sigma, L, A, alpha, delta)
     KK = K(bvec_guess)
     YY = Y(bvec_guess, alpha, A)
     rr = r(bvec_guess, alpha, A, delta)
@@ -200,24 +156,6 @@ def get_SS(params, bvec_guess, nvec, SS_graphs = True):
 
     # ploting graphs
     if SS_graphs == True:
-        # period = np.arange(1, S+1)
-        # cur_path = os.path.split(os.path.abspath(__file__))[0]
-        # output_fldr = "images"
-        # output_dir = os.path.join(cur_path, output_fldr)
-        # if not os.access(output_dir, os.F_OK):
-        #     os.makedirs(output_dir)
-        # plt.plot(period, c, '^-', label = 'beta = '+format(beta)+ \
-        #     ' Consumption')
-        # plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
-        # plt.plot(period, np.concatenate((np.array([0]), b_ss)), 'o-', label= \
-        #     'beta =' + format(beta) + ' Saving')
-        # plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
-        # plt.grid(b=True, which='major', color='0.65', linestyle='-')
-        # output_path = os.path.join(output_dir, "consumption")
-        # plt.xlabel(r'Period $t$')
-        # plt.ylabel(r'Level $b_t$ $c_t$')
-        # plt.savefig(output_path)
-        # plt.show()
 
         cur_path = os.path.split(os.path.abspath(__file__))[0]
         output_fldr = "images"
@@ -225,10 +163,11 @@ def get_SS(params, bvec_guess, nvec, SS_graphs = True):
         if not os.access(output_dir, os.F_OK):
             os.makedirs(output_dir)
 
-        age_pers = np.arange(S)
+        period = np.arange(S)
+        period2 = np.arange(S-1)
         fig, ax = plt.subplots()
-        plt.plot(age_pers, c, marker='D', linestyle=':', label='consumption')
-        #plt.plot(age_pers, b_ss, marker='o', linestyle='--', label='saving')
+        plt.plot(period, c, marker='D', linestyle=':', label='consumption')
+        plt.plot(period2, b_ss, marker='o', linestyle='--', label='saving')
 
         # for the minor ticks, use no labels; default NullFormatter
         minorLocator = MultipleLocator(1)
@@ -247,16 +186,107 @@ def get_SS(params, bvec_guess, nvec, SS_graphs = True):
     return ss_output
 
 
+# TPI
+bvec_guess = np.array([-0.01, 0.1, 0.2, 0.23, 0.25, 0.23, 0.2, 0.1,
+           -0.01, 0.1, 0.2, 0.23, 0.25, 0.23, 0.2, 0.1,
+           -0.01, 0.1, 0.2, 0.23, 0.25, 0.23, 0.2, 0.1,
+           -0.01, 0.1, 0.2, 0.23, 0.25, 0.23, 0.2, 0.1,
+           -0.01, 0.1, 0.2, 0.23, 0.25, 0.23, 0.2, 0.1,
+           -0.01, 0.1, 0.2, 0.23, 0.25, 0.23, 0.2, 0.1,
+           -0.01, 0.1, 0.2, 0.23, 0.25, 0.23, 0.2, 0.1,
+           0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1,
+           0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1,
+           0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1])
+
+params = S, beta, sigma, nvec, L, A, alpha, delta, SS_tol
+b_ss = opt.fsolve(SS_eqns, bvec_guess, args=(params), xtol = 1e-14)
+KT = b_ss.sum()
+bvec_1 = ((1.5 - 0.87) / 78 *(S-2) + 0.87) * b_ss
+K1 = bvec_1.sum()
+T = 30
+
+# Kpath0
+def get_Kpath0(K1, KT, T, spec):
+	bvec_1 = ((1.5 - 0.87) / 78 *(S-2) + 0.87) * b_ss 
+	K1 = bvec_1.sum()
+	KT = b_ss.sum()
+
+	if spec == "linear":
+	    Kpath0 = np.linspace(K1, KT, T)
+	elif spec == "quadratic":
+	    cc = K1
+	    bb = 2 * (KT - K1) / (T - 1)
+	    aa = (K1 - KT) / ((T - 1) ** 2)
+	    Kpath0 = aa * (np.arange(0, T) ** 2) + (bb * np.arange(0, T)) + cc
+	
+	return Kpath0
+
+Kpath0 = get_Kpath0(K1,KT,T,"quadratic")
+def wpath(alpha, A, L):
+    wt = []
+    for t in range(T):
+        w = (1 - alpha) * A * (Kpath0[t] / L) ** alpha
+        wt.append(w)
+    return wt
 
 
+# get rt
+def rpath(alpha, A, L, delta):
+    rt = []
+    for t in range(T):
+        r = alpha * A * (L / Kpath0[t]) ** (1 - alpha) - delta
+        rt.append(r)
+    return rt
 
 
+# def get_kkpath(bvec_1, bvec_guess, T, params):
+ 	
+#  	S, beta, sigma, nvec, L, A, alpha, delta, SS_tol = params
+#  	w = wpath(alpha, A, L)
+#  	r = rpath(alpha, A, L, delta) 
 
+#  	# initialize the saving time path with zeores
+#  	b_path = np.append(bvec_1.reshape((S - 1, 1)),np.zeros((S - 1, T + S - 3)), axis = 1)
+	
+#  	for i in range(2, S - 2):
+#  	# i + 1 represents number of period left to live 
+#  	    Diagmask = np.eye(i + 1, dtype = bool)
+#  	    r_s = r[0 : i + 2]
+#  	    w_s = np.append([0], w[0 : i + 2])
+#  	    b_guess = np.diagonal(b_path[S - 2 - i:, : i + 1])
+#  	    b_start = b_path[-i - 2, 0]
+#  	    # x = opt.fsolve(get_EulErr, bvec_guess, args=(w, r, params, bvec_guess), xtol = SS_tol)
+#  	    b_ss = opt.fsolve(SS_eqns, b_guess, args=(params), xtol = 1e-14)
+#  	    b_path[S - 2 - i : , 1 : 2 + i] += Diagmask * b_ss
+	
+#  	Diagmask = np.eye(S - 1, dtype = bool)
+#  	for i in range(0 , T - 1):
+#  	    w_s = w[i : i + S]
+#  	    r_s = r[i + 1: i + S]
+#  	    # x = opt.fsolve(get_EulErr, bvec_guess, args = (w, r, params, bvec_guess), xtol = SS_tol)
+#  	    b_ss = opt.fsolve(SS_eqns, bvec_guess, args=(params), xtol = 1e-14)
+#  	    b_path[:, i + 1 : i + S] += Diagmask * b_ss
+#  	return b_path[:, :T]
+	
 
+# def get_pathlife(bvec_1, bvec_guess, w, r, params):
+#    # S,  nvec, A, alpha, delta, beta, sigma, L, SS_tol = params
+#    # b_path = opt.fsolve(EulErr, bvec_guess, args=(w, r, params), xtol = 1e-13)
+#    # c_path = get_cvec(b_path, w, r, params)
+#    # Eul_path = EulErr(b_path, w, r, params)
+#    # return b_path, c_path, Eul_path
 
+# 	params = (S, T, beta, sigma, nvec, b_ss, SS_tol)
+# 	cpath = np.zeros((S, T + S - 2))
+# 	bpath = np.append(bvec_1.reshape((S - 1, 1)), np.zeros((S - 1, T + S - 3)), axis=1)
+# 	EulErrPath = np.zeros((S - 1, T + S - 2))
 
+# 	cpath[S - 1, 0] = ((1 + rpath[0]) * bvec_1[S - 2] + wpath[0] * nvec[S - 1])
 
-
-
+def norm(K1, K2):
+ 	result = 0
+ 	for i in range(len(K1)):
+ 	    result += (K1[i] - K2[i])**2
+ 	return result**0.5
 
 
