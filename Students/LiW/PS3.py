@@ -10,7 +10,6 @@ import os
 
 S = 80
 alpha = 0.35
-L = (2/3) * S + 0.2 * (1/3)* S
 A = 1
 delta = 0.05
 beta = 0.96 ** (80/S)
@@ -23,6 +22,8 @@ nvec = np.zeros(S)
 nvec[:int(round(2 * S / 3))] = 1
 nvec[int(round(2 * S / 3)):] = 0.2
 
+# L
+L = nvec.sum()
 # K
 def K(bvec_guess):
     K = np.sum(bvec_guess)
@@ -39,7 +40,7 @@ def r(bvec_guess, alpha, A, delta):
     return r
  
 # set up c_s = [c_1, c_2, c_3]
-def  c_s(S, alpha, A, delta, bvec_guess):
+def  c_s(S, alpha, A, delta, nvec, bvec_guess):
     '''
     Inputs:c
         params = alpha, A, , delta
@@ -58,7 +59,7 @@ def  c_s(S, alpha, A, delta, bvec_guess):
     bt1 = np.append(bvec_guess, [0])
     
 
-    cvec = w0 * nvec[:1] + (1+r0) * bt - bt1
+    cvec = w0 * nvec + (1+r0) * bt - bt1
     return cvec
 
 # Y
@@ -70,7 +71,7 @@ def  Y(bvec_guess, alpha, A):
 def feasible(S, alpha, A, delta, bvec_guess):
     
     # compute K and c_s
-    c = c_s(S, alpha, A, delta, bvec_guess)
+    c = c_s(S, alpha, A, delta, nvec, bvec_guess)
 
     # check K
     K_cnstr = K(bvec_guess) <= 0
@@ -82,7 +83,7 @@ def feasible(S, alpha, A, delta, bvec_guess):
     b_cnstr = np.zeros(S-1, dtype=bool)
 
     for s in range(S):
-        c_cnstr = c_s(S, alpha, A, delta, bvec_guess) <= 0
+        c_cnstr = c <= 0
         
         # if the c1 is unfeasible, b1 unfeasible
         if c_cnstr[0] == True:
@@ -136,8 +137,8 @@ def get_EulErr(beta, sigma, alpha, A, delta, bvec_guess):
     w0 = w(bvec_guess, alpha, A)
     r0 = r(bvec_guess, alpha, A, delta)
 
-    c = c_s(S, alpha, A, delta, bvec_guess)
-    c_cnstr = c_s(S, alpha, A, delta, bvec_guess) <= 0
+    c = c_s(S, alpha, A, delta, nvec, bvec_guess)
+    c_cnstr = c <= 0
     c[c_cnstr] = 9999. 
     # print (c)
 
@@ -160,9 +161,9 @@ def SS_eqns(bvec_guess, *params):
     YY = Y(bvec_guess, alpha, A)
     rr = r(bvec_guess, alpha, A, delta)
     ww = w(bvec_guess, alpha, A)
-    bt = np.append([0,0], bvec_guess[:-1])
-    bt1 = np.append([0], bvec_guess)
-    c = c_s(S, alpha, A, delta, bvec_guess)
+    bt = np.append([0], bvec_guess)
+    bt1 = np.append(bvec_guess, [0])
+    c = c_s(S, alpha, A, delta, nvec, bvec_guess)
     
     eqns = np.zeros(S-1)
     for i in range(S-1):
@@ -170,7 +171,7 @@ def SS_eqns(bvec_guess, *params):
     return eqns
 
 
-def get_SS(params, bvec_guess, SS_graphs = True):
+def get_SS(params, bvec_guess, nvec, SS_graphs = True):
     start_time = time.clock()
     # set up inputs
 
@@ -179,9 +180,9 @@ def get_SS(params, bvec_guess, SS_graphs = True):
     YY = Y(bvec_guess, alpha, A)
     rr = r(bvec_guess, alpha, A, delta)
     ww = w(bvec_guess, alpha, A)
-    bt = np.append([0,0], bvec_guess[:-1])
-    bt1 = np.append([0], bvec_guess)
-    c = c_s(S, alpha, A, delta, bvec_guess)
+    bt = np.append([0], bvec_guess)
+    bt1 = np.append(bvec_guess, [0])
+    c = c_s(S, alpha, A, delta, nvec, bvec_guess)
    
     EulErr_ss = get_EulErr(beta, sigma, alpha, A, delta, bvec_guess)
 
@@ -196,7 +197,6 @@ def get_SS(params, bvec_guess, SS_graphs = True):
     elapsed_time = time.clock() - start_time
 
     ss_output = {'b_ss': b_ss, 'c_ss': c, 'w_ss': ww, 'r_ss': rr, 'K_ss': KK, 'Y_ss': YY, 'EulErr_ss': EulErr_ss, 'RCerr_ss': RCerr_ss, 'ss_time': elapsed_time}
-
 
     # ploting graphs
     if SS_graphs == True:
@@ -225,10 +225,10 @@ def get_SS(params, bvec_guess, SS_graphs = True):
         if not os.access(output_dir, os.F_OK):
             os.makedirs(output_dir)
 
-        age_pers = np.arange(1, S+1)
+        age_pers = np.arange(S)
         fig, ax = plt.subplots()
         plt.plot(age_pers, c, marker='D', linestyle=':', label='consumption')
-        plt.plot(age_pers, b_ss, marker='o', linestyle='--', label='saving')
+        #plt.plot(age_pers, b_ss, marker='o', linestyle='--', label='saving')
 
         # for the minor ticks, use no labels; default NullFormatter
         minorLocator = MultipleLocator(1)
@@ -245,9 +245,6 @@ def get_SS(params, bvec_guess, SS_graphs = True):
 
 
     return ss_output
-
-
-# TPI
 
 
 
