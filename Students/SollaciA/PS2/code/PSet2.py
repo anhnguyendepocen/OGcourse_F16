@@ -91,12 +91,12 @@ def get_SS(params, bvec_guess, SS_graphs = False):
                  'ss_time': ss_time} 
                  
     if SS_graphs == True:
-#        # Create directory if images directory does not already exist
-#        cur_path = os.path.split(os.path.abspath(__file__))[0]
-#        output_fldr = "images"
-#        output_dir = os.path.join(cur_path, output_fldr)
-#        if not os.access(output_dir, os.F_OK):
-#            os.makedirs(output_dir)
+        # Create directory if images directory does not already exist
+        cur_path = os.path.split(os.path.abspath("__file__"))[0]
+        output_fldr = "images"
+        output_dir = os.path.join(cur_path, output_fldr)
+        if not os.access(output_dir, os.F_OK):
+            os.makedirs(output_dir)
         age = np.arange(1, S+1)
         fig, ax = plt.subplots()
         plt.plot(age, np.append([0], b_ss), marker='D', linestyle=':', label='Savings')
@@ -109,13 +109,13 @@ def get_SS(params, bvec_guess, SS_graphs = False):
         plt.xlabel(r'Period $t$')
         plt.ylabel(r'SS Consumption $\bar{c}_{ss}$ and Savings $\bar{b}_{ss}$')
         plt.legend(loc='right')
-        output_dir = \
-        'C:\\Users\\Alexandre\\Documents\\UChicago\\3rd year\\OGcourse_F16\\Students\\SollaciA\\PS2\\figures'
         output_path = os.path.join(output_dir, "cons_savings_dist")
         plt.savefig(output_path)
         plt.show()
     return ss_output
 
+
+    
 # Question 3
 
 T = 50
@@ -193,6 +193,12 @@ conv_period = np.where(abs(K - K_ss) < 0.0001)
 K_plot = np.append(K, [K_ss, K_ss, K_ss, K_ss, K_ss])
 K_linear = np.append(np.linspace(K_init, K_ss, T), [K_ss, K_ss, K_ss, K_ss, K_ss] )
 
+cur_path = os.path.split(os.path.abspath("__file__"))[0]
+output_fldr = "images"
+output_dir = os.path.join(cur_path, output_fldr)
+if not os.access(output_dir, os.F_OK):
+    os.makedirs(output_dir)
+
 period = np.arange(T+5)
 fig, ax = plt.subplots()
 plt.plot(period, K_linear , marker='D', linestyle=':', label='Linear Guess')
@@ -205,8 +211,6 @@ plt.title('Capital Time Path to Steady State', fontsize=15)
 plt.xlabel(r'Period $t$')
 plt.ylabel(r'Capital')
 plt.legend(loc='upper right')
-output_dir = \
-'C:\\Users\\Alexandre\\Documents\\UChicago\\3rd year\\OGcourse_F16\\Students\\SollaciA\\PS2\\figures'
 output_path = os.path.join(output_dir, "time_path_K")
 plt.savefig(output_path)
 plt.show()
@@ -230,8 +234,6 @@ plt.title('Wage Time Path to Steady State', fontsize=15)
 plt.xlabel(r'Period $t$')
 plt.ylabel(r'$w$')
 #plt.legend(loc='upper right')
-output_dir = \
-'C:\\Users\\Alexandre\\Documents\\UChicago\\3rd year\\OGcourse_F16\\Students\\SollaciA\\PS2\\figures'
 output_path = os.path.join(output_dir, "time_path_w")
 plt.savefig(output_path)
 plt.show()
@@ -247,8 +249,6 @@ plt.title('Interest Rate Time Path to Steady State', fontsize=15)
 plt.xlabel(r'Period $t$')
 plt.ylabel(r'$r$')
 #plt.legend(loc='upper right')
-output_dir = \
-'C:\\Users\\Alexandre\\Documents\\UChicago\\3rd year\\OGcourse_F16\\Students\\SollaciA\\PS2\\figures'
 output_path = os.path.join(output_dir, "time_path_r")
 plt.savefig(output_path)
 plt.show()
