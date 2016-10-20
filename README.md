@@ -57,7 +57,7 @@ Midterm      |    50  |  25% |
 Final Exam   |    50  |  25% |
 **Total points** | **200** | **100%** |
 
-* **Homework:** I will assign 8 problem sets throughout the term, and I will drop your one lowest problem set score.
+* **Homework:** I will assign 7 problem sets throughout the term, and I will drop your one lowest problem set score.
 	* You must write and submit your own computer code, although I encourage you to collaborate with your fellow students. I **DO NOT** want to see a bunch of copies of identical code. I **DO** want to see each of you learning how to code these problems so that you could do it on your own.
 	* Problem set solutions, both written and code portions, will be turned in via a pull request from your private [GitHub.com](https://git-scm.com/) repository which is a fork of the class master repository on my account. (You will need to set up a GitHub account if you do not already have one.)
 	* Problem sets will be due on the day listed in the Daily Course Outline section of this syllabus (see below) unless otherwise specified. Late homework will not be graded.
@@ -83,19 +83,19 @@ Final Exam   |    50  |  25% |
 | Oct. 20 | Th | Bequests: simple              | Ch. 8       |      |
 |         |    |                               | D (2015)    |      |
 |         |    |                               | DEMPRS (2016) |    |
-| Oct. 25 |  T | Bequests: calibrated from SCF | Ch. 8       | PS 4 |
+| Oct. 25 |  T | Bequests: calibrated from SCF | Ch. 8       |      |
 |         |    |                               | D (2015)    |      |
-| **Oct. 27** | **Th** | **Midterm 1 (Chs. 1-8)** |          | PS 5 |
+| **Oct. 27** | **Th** | **Midterm 1 (Chs. 1-8)** |          | PS 4 |
 | Nov.  1 |  T | Population demographics       | Ch. 9       |      |
 |         |    |                               | N (2015)    |      |
 | Nov.  3 | Th | Population demographics       |  Ch. 9      |      |
 | Nov.  8 | T  | Population demographics       |  Ch. 9      |      |
-| Nov. 10 | Th | Small open economy            |  Ch. 10     | PS6  |
+| Nov. 10 | Th | Small open economy            |  Ch. 10     | PS5  |
 | Nov. 17 | Th | Unbalanced government budget constraint | Ch. 11 |  |
-| Nov. 22 | T  | Tax functions from microsimulation | Ch. 12 | PS 7 |
+| Nov. 22 | T  | Tax functions from microsimulation | Ch. 12 | PS 6 |
 |         |    |                               | DEP (2016)  |      |
 | Nov. 29 |  T | Tax functions from microsimulation | Ch. 12 |      |
-| Dec.  1 | Th |                               |             | PS 8 |
+| Dec.  1 | Th |                               |             | PS 7 |
 |         |    | *Exam preparation (reading) days, Dec. 1-2* |  |   |
 | **Dec. 6** | **T** | **Final Exam (comprehensive)** |      |      |
 |         |     | **10:30a.m.-12:30p.m. in Saieh 102** |           |      |
