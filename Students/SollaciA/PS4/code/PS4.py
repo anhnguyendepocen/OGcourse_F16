@@ -34,11 +34,11 @@ bnds = ((0, None), (0, None))
 res = opt.minimize(dist_utility, params_guess, args=(nvec),
                    method='L-BFGS-B',bounds = bnds, options={'disp': True, 'ftol': 1e-8})
 SSE = res.fun
-b, mu = res.x
+b_ellip, mu = res.x
 
 lvec = 1 - nvec
 mv_cfe = (1-lvec)**(1/theta)
-mv_elp = b*(1 - (1 - lvec)**(mu))**(1/mu - 1) * (1-lvec)**(mu-1)
+mv_elp = b_ellip*(1 - (1 - lvec)**(mu))**(1/mu - 1) * (1-lvec)**(mu-1)
 
 # Create directory if images directory does not already exist
 cur_path = os.path.split(os.path.abspath("__file__"))[0]
@@ -74,6 +74,7 @@ beta = 0.96**(80/S)
 delta = 1 - (1 - 0.05)**(80/S)
 sigma = 3
 l_tilde = 1.
+chi_n_vec = 1.
 SS_tol = 1e-13
 EulDiff = True
 
@@ -86,43 +87,21 @@ n_low, n_high, b_cnstr, c_cnstr, K_cnstr = fun2.feasible(f_params, nvec_guess, b
 
 ######################## QUESTION 3 ######################################
 
-# initial guesses for interest rate and wage
-r = .4
-w = .4
-
-omega = 0.8
-tol = 1e-9
-r_error = 10
-w_error = 10
-max_iter = 1000
-iter = 1
-
-
-while (r_error > tol or w_error > tol) and iter < max_iter:
-    params = (S, beta, sigma, b, mu, l_tilde, A, alpha, delta, SS_tol, EulDiff, r, w)
-    
-    ss_output = fun3.get_SS(params, bvec_guess, nvec_guess, graphs = False)
-    
-    w_ss = ss_output['w_ss']
-    r_ss = ss_output['r_ss']
-    b_ss = ss_output['b_ss']
-    n_ss = ss_output['n_ss']
-
-    r_error = abs(r - r_ss)
-    w_error = abs(w - w_ss)
-    if r_error > tol or w_error > tol:
-        r = omega*r + (1-omega)*r_ss
-        w = omega*w + (1-omega)*w_ss
-    iter += 1
-
-params = (S, beta, sigma, b, mu, l_tilde, A, alpha, delta, SS_tol, EulDiff, r_ss, w_ss)
-ss_output = fun3.get_SS(params, b_ss, n_ss, graphs = True)
+params = (S, beta, sigma, A, alpha, delta, chi_n_vec, b_ellip, mu, l_tilde, EulDiff, SS_tol)
+ss_output = fun3.get_SS(params, bvec_guess, nvec_guess, graphs = True)
 
 error = ss_output['EulErr_ss']
 max_error = max( max(error) , max(-error) )
 print("The maximum Euler error is: ", max_error)
 
 ############################# QUESTION 4 ###################################
+
+b_ss = ss_output['b_ss']
+K_ss = ss_output['K_ss']
+C_ss = ss_output['C_ss']
+L_ss = ss_output['L_ss']
+n_ss = ss_output['n_ss']
+
 
 x = np.zeros(S+1)
 for i in range(S+1):
@@ -131,22 +110,57 @@ x = x[2:]
 b_init = b_ss*x
 
 T = 50
-L = sum(n_ss)
-
-b_ss = ss_output['b_ss']
-K_ss = ss_output['K_ss']
-C_ss = ss_output['C_ss']
-maxiter_TPI = 100
+maxiter_TPI = 5000
 mindist_TPI = 1e-9
 xi = 0.8
-bvec1 = b_init
-nvec1 = n_ss
-
 TPI_tol = 1e-9
-tpi_params = (S, T, beta, sigma, A, alpha, delta, b, mu, l_tilde, b_ss, K_ss, C_ss,
-        maxiter_TPI, mindist_TPI, xi, TPI_tol, EulDiff)
 
-#tpi_output = fun4.get_TPI(tpi_params, bvec1, nvec1, graphs = True)
+tpi_params = (S, T, beta, sigma, chi_n_vec, b_ellip, mu, l_tilde, A, alpha, 
+          delta, b_ss, n_ss, K_ss, C_ss, L_ss, maxiter_TPI, mindist_TPI, xi, TPI_tol, EulDiff)
+
+tpi_output = fun4.get_TPI(tpi_params, b_init, True)
+
+
+# Plots
+npath3 = tpi_output['npath'][2, :]
+bpath3 = tpi_output['bpath'][1, :]
+
+cur_path = os.path.split(os.path.abspath("__file__"))[0]
+output_fldr = "images"
+output_dir = os.path.join(cur_path, output_fldr)
+if not os.access(output_dir, os.F_OK):
+    os.makedirs(output_dir)
+
+# Plot time path of aggregate capital stock
+period = np.linspace(1, T, T)
+minorLocator = MultipleLocator(1)
+fig, ax = plt.subplots()
+plt.plot(period, bpath3[:T], marker='D')
+ax.xaxis.set_minor_locator(minorLocator)
+plt.grid(b=True, which='major', color='0.65', linestyle='-')
+plt.title('Time path savings for 3-period olds')
+plt.xlabel(r'Period $t$')
+plt.ylabel(r'Saving$')
+output_path = os.path.join(output_dir, "tpi_s")
+plt.savefig(output_path)
+plt.show()
+
+
+minorLocator = MultipleLocator(1)
+fig, ax = plt.subplots()
+plt.plot(period, npath3[:T], marker='D')
+ax.xaxis.set_minor_locator(minorLocator)
+plt.grid(b=True, which='major', color='0.65', linestyle='-')
+plt.title('Time path labor supply for 3-period olds')
+plt.xlabel(r'Period $t$')
+plt.ylabel(r'Labor Supply')
+output_path = os.path.join(output_dir, "tpi_n")
+plt.savefig(output_path)
+plt.show()
+
+
+
+
 
 
 
