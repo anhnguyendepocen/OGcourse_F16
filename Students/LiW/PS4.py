@@ -100,12 +100,21 @@ print("n_ss : ", ss_output["n_ss"], "b_ss ： ", ss_output["b_ss"],
 
 
 # Q4
-
+print ("Q4 :")
 maxiter_TPI = 10000
 mindist_TPI = 1e-9
 xi = 0.2
 TPI_tol = 1e-9
 T = 25
+b_ss = ss_output["b_ss"]
+n_ss = ss_output["n_ss"]
+K_ss = ss_output["K_ss"]
+C_ss = ss_output["C_ss"]
+L_ss = ss_output["L_ss"]
+params = (S, T, beta, sigma, chi, b, mu, l_tilde, A, alpha, delta, b_ss, n_ss, K_ss, C_ss,
+         L_ss, maxiter_TPI, mindist_TPI, xi, SS_tol)
+
+print (get_TPI(params, bvec_guess4, True))
 
 
 
