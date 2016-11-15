@@ -91,9 +91,9 @@ Final Exam   |    50  |  25% |
 |         |    |                               | N (2015)    |      |
 | Nov. 10 | Th | Population demographics       |  Ch. 9      |      |
 | Nov. 15 | T  | Population demographics       |  Ch. 9      |      |
-| Nov. 17 | Th | Tax functions from microsimulation |  Ch. 12 | PS6 |
+| Nov. 17 | Th | Tax functions from microsimulation |  Ch. 12 |     |
 |         |    |                               | DEP (2016)  |      |
-| Nov. 22 | T  | Tax functions from microsimulation | Ch. 12 |      |
+| Nov. 22 | T  | Tax functions from microsimulation | Ch. 12 | PS6  |
 | Nov. 29 |  T | Tax functions from microsimulation | Ch. 12 |      |
 | Dec.  1 | Th |                               |             | PS 7 |
 |         |    | *Exam preparation (reading) days, Dec. 1-2* |  |   |
