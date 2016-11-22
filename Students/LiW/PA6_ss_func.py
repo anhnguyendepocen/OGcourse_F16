@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Nov 22 09:55:54 2016
-
-@author: weijiali
-"""
-
 import time
 import numpy as np
 import scipy.optimize as opt
@@ -22,7 +14,7 @@ import pandas as pd
 S = 80
 nvec = 0.2*np.ones(S)
 for i in range(int(np.round(2*S/3))):
-    nvec[i] = 1.
+    nvec[i] = 1
 
 beta = 0.96
 delta = 0.05
@@ -39,9 +31,8 @@ bvec_guess = 0.1*np.ones(S-1)
 fert_rates = p.get_fert(100, False)
 mort_rates, infmort_rate = p.get_mort(100, False)
 imm_rates = p.get_imm_resid(100, False)
-
-var_names = ('age', 'year1', 'year2')   
-pop = pd.read_csv('pop_data.csv', thousands=',', header=0, names=var_names)
+  
+pop = pd.read_csv('pop_data.csv', thousands=',', header=0, names=('age', 'year1', 'year2'))
 pop = pop.as_matrix()
 
 pop1 = pop[:,1]
@@ -49,20 +40,19 @@ pop2 = pop[:,2]
 
 g = sum(pop2)/sum(pop1) - 1
 
-Omega = np.diag(imm_rates)
-Omega1 = fert_rates*(1 - infmort_rate)
-Omega2 = np.diag(1 - mort_rates[:-1]) 
-Omega3 = np.vstack((np.zeros([1,99]),Omega2))
-Omega4 = np.hstack((Omega3,np.zeros([100,1])))
+omega = np.diag(imm_rates)
+omega1 = fert_rates*(1 - infmort_rate)
+omega2 = np.diag(1 - mort_rates[:-1]) 
+omega3 = np.vstack((np.zeros([1,99]),omega2))
+omega4 = np.hstack((omega3,np.zeros([100,1])))
 
-Omega[0,:] = Omega[0,:] + Omega1
-Omega += Omega4
+omega[0,:] += omega1
+omega += omega4
 
-w,v = np.linalg.eig(Omega)
+w,v = np.linalg.eig(omega)
 
 g_bar = w[np.where(w>1)]-1
-omega_bar = v[:, np.where(w>1)]
-omega_bar = np.reshape(omega_bar,100)
+omega_bar = np.reshape(v[:, np.where(w>1)],100)
 
 def get_K(barr, omega, imm_rates, g_bar):
 
