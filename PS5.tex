@@ -1,0 +1,132 @@
+\documentclass[letterpaper,12pt]{article}
+\usepackage{array}
+\usepackage{geometry}
+\geometry{letterpaper,tmargin=1in,bmargin=1in,lmargin=1.25in,rmargin=1.25in}
+%\renewcommand\headrulewidth{0pt}
+%\renewcommand\footrulewidth{0pt}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{enumerate}
+%\usepackage{harvard}
+%\usepackage{setspace}
+\usepackage{float,color}
+\usepackage[pdftex]{graphicx}
+\usepackage{hyperref}
+\hypersetup{colorlinks,linkcolor=red,urlcolor=blue}
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{acknowledgement}[theorem]{Acknowledgement}
+\newtheorem{algorithm}[theorem]{Algorithm}
+\newtheorem{axiom}[theorem]{Axiom}
+\newtheorem{case}[theorem]{Case}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{conclusion}[theorem]{Conclusion}
+\newtheorem{condition}[theorem]{Condition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{criterion}[theorem]{Criterion}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{derivation}{Derivation} % Number derivations on their own
+\newtheorem{example}[theorem]{Example}
+\newtheorem{exercise}[theorem]{Exercise}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{notation}[theorem]{Notation}
+\newtheorem{problem}[theorem]{Problem}
+\newtheorem{proposition}{Proposition} % Number propositions on their own
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{solution}[theorem]{Solution}
+\newtheorem{summary}[theorem]{Summary}
+%\numberwithin{equation}{section}
+\bibliographystyle{aer}
+\newcommand\ve{\varepsilon}
+\newcommand\boldline{\arrayrulewidth{1pt}\hline}
+
+
+\begin{document}
+
+\begin{flushleft}
+   \textbf{\large{Problem Set \#5}} \\
+   MACS 40000, Dr. Evans \\
+   Weijia Li
+\end{flushleft}
+
+\vspace{5mm}
+
+\noindent\begin{enumerate}
+   \item 
+ 	\begin{enumerate}
+ 	\item 
+ 	\end{enumerate}
+ 	
+ 	\item \textbf{Solve for the steady-state equilibrium}
+ 	\begin{enumerate}[(a)]
+ 	\item The steady state solution:
+ 	\begin{verbatim}
+ b_ss is:  [  0.04543521   0.09555252   0.15051623   0.21049668   0.27567042
+   0.34622048   0.42233659   0.50421542   0.59206086   0.68608424
+   0.78650466   0.8935492    1.00745328   1.12846093   1.25682512
+   1.39280805   1.53668154   1.68872735   1.84923755   2.01851489
+   2.19687322   2.38463783   2.58214595   2.78974713   3.00780371
+   3.23669126   3.47679914   3.72853089   3.99230486   4.26855466
+   4.55772979   4.86029616   5.17673675   5.50755217   5.85326134
+   6.21440219   6.59153227   6.98522954   7.3960931    7.82474394
+   8.27182575   8.73800577   9.22397563   9.73045223  10.25817869
+  10.80792529  11.38049048  11.97670189  12.5974174   13.24352625
+  13.91595019  14.61564467  15.34360004  14.99733858  14.64110852
+  14.27453963  13.89724815  13.5088363   13.1088918   12.69698729
+  12.27267984  11.83551034  11.3850029   10.92066428  10.44198321
+   9.94842977   9.43945469   8.91448862   8.37294144   7.8142015
+   7.23763476   6.64258409   6.02836831   5.39428139   4.73959151
+   4.06354014   3.36534101   2.64417917   1.89920989   1.12955759]
+c_ss is: [ 1.34858055  1.34555857  1.34254336  1.33953491  1.3365332   1.33353822
+  1.33054994  1.32756837  1.32459347  1.32162525  1.31866367  1.31570873
+  1.31276041  1.3098187   1.30688358  1.30395504  1.30103306  1.29811762
+  1.29520873  1.29230634  1.28941047  1.28652108  1.28363817  1.28076171
+  1.27789171  1.27502813  1.27217097  1.26932021  1.26647585  1.26363785
+  1.26080622  1.25798093  1.25516197  1.25234933  1.24954299  1.24674294
+  1.24394916  1.24116165  1.23838038  1.23560534  1.23283652  1.23007391
+  1.22731749  1.22456724  1.22182316  1.21908522  1.21635342  1.21362775
+  1.21090818  1.2081947   1.20548731  1.20278598  1.2000907   1.19740147
+  1.19471826  1.19204107  1.18936987  1.18670466  1.18404542  1.18139214
+  1.17874481  1.1761034   1.17346792  1.17083835  1.16821466  1.16559686
+  1.16298492  1.16037883  1.15777858  1.15518417  1.15259556  1.15001276
+  1.14743574  1.1448645   1.14229902  1.13973928  1.13718529  1.13463702
+  1.13209445  1.12955759]
+w_ss is: 1.37938038407
+r_ss is: 0.0365382668907
+K_ss is: 501.237306089
+Y_ss is: 123.9320222
+C_ss is: 98.8701568954
+Euler errors are:  [  1.16118226e-12   5.72711878e-11  -2.22610819e-11  -7.72593101e-12
+   9.48463530e-13  -6.15063556e-14  -1.35447209e-14  -2.24265051e-14
+  -1.56541446e-14  -1.44328993e-15   6.88338275e-15   1.19904087e-14
+   1.62092562e-14   1.92068583e-14   2.10942375e-14   2.37587727e-14
+   2.79776202e-14   3.14193116e-14   3.74145159e-14   4.42978987e-14
+   5.29576383e-14   6.53921362e-14   7.78266340e-14   9.08162434e-14
+   1.05582210e-13   1.16129328e-13   1.28563826e-13   1.36668454e-13
+   1.41220369e-13   1.42663659e-13   1.36779477e-13   1.31894495e-13
+   1.20348176e-13   1.10245146e-13   9.83657600e-14   8.32667268e-14
+   7.40518757e-14   6.58362254e-14   5.65103520e-14   5.59552404e-14
+   6.21724894e-14   6.76125822e-14   7.76045894e-14   9.98090499e-14
+   1.33892897e-13   1.62647673e-13   2.09499085e-13   2.61679567e-13
+   3.09530179e-13   4.19109192e-13   7.19424520e-13  -1.76647585e-12
+  -5.57840441e-11   5.03538322e-11   5.57576207e-12  -2.54374299e-12
+  -2.02091677e-11   3.77105014e-11   5.28304067e-11  -1.11525233e-11
+  -4.74151829e-11  -4.14982493e-11  -1.87452276e-11   3.88189481e-12
+   1.96282990e-11   2.58306709e-11   2.13780105e-11   6.11377615e-12
+  -1.62184710e-11  -3.41410233e-11  -2.52148302e-11   2.62849742e-11
+   7.35248529e-11   1.38140610e-11  -7.14740489e-11  -1.70607972e-11
+   1.83896232e-11   6.68587408e-12   1.90303329e-12   8.16231527e-11]
+Resource constraint error is:  4.97379915032e-14
+SS computation time: 0.0366 sec
+ 	\end{verbatim}
+ 	\item 
+ 	\end{enumerate}
+ 	
+\end{enumerate}
+
+
+
+
+\end{document}
