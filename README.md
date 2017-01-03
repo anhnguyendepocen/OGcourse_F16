@@ -1,4 +1,4 @@
-# MACS 40000: Economic Policy Analysis with Overlapping Generations Models #
+# MACS 40000: Economic Policy Analysis with Overlapping Generations Models (Autumn 2016) #
 
 |  | [Dr. Richard Evans](https://sites.google.com/site/rickecon/) |
 |--------------|--------------------------------------------------------------|
